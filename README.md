@@ -14,7 +14,7 @@ El validador debe ser lo suficientemente versátil como para poder adaptarse a c
 
 El validador debe poder recibir y almacenar reglas de validación para un clase de objetos en particular.
 
-    Ejemplo:
+Ejemplo:
     
 ValidatorManager vm = new ValidatorManager();
 vm.addRuleFor(MyObject.class, myRule);
