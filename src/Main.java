@@ -4,6 +4,8 @@ import employees.SoftwareEngineer;
 import validator.Rule;
 import validator.ValidatorManager;
 
+import java.util.HashSet;
+
 /**
  * Program's main class.
  *
@@ -18,14 +20,14 @@ public class Main {
     public static void main(String args[]) {
         ValidatorManager vm = new ValidatorManager();
 
-        // Skill grade's rule definition
+        // Skill grade's rule definition.
         Rule skillGradeRule = new Rule("Skill Grade");
         skillGradeRule.setExec((Skill skill) -> {
             return (skill.getGrade() > 0 && skill.getGrade() <= 100);
         });
         vm.addRuleFor(Skill.class, skillGradeRule);
 
-        // Engineer's age rule definition
+        // Engineer's age rule definition.
         Rule engAgeRule = new Rule("Engineer's Age");
         engAgeRule.setExec((Engineer engineer) -> {
             return (engineer.getAge() > 23 && engineer.getAge() <= 60);
@@ -40,7 +42,7 @@ public class Main {
         });
         vm.addRuleFor(Engineer.class, engSeniorityRule);
 
-        // Engineer's age rule definition
+        // Engineer's age rule definition.
         Rule softEngSalaryRule = new Rule("Software Engineer's Salary");
         softEngSalaryRule.setExec((SoftwareEngineer eng) -> {
             boolean state = false;
@@ -64,14 +66,33 @@ public class Main {
         vm.addRuleFor(SoftwareEngineer.class, softEngSalaryRule);
 
         // Skills validations.
-        Skill communicationSkill = new Skill("Communication", true, 60);
-        vm.validate(communicationSkill);
+        Skill communicationSkill = new Skill("Communication", true, 110);
+        HashSet<Rule> failedRules = (HashSet<Rule>) vm.validate(communicationSkill);
 
-        // Engineer's validations
+        // Engineer's validations.
         SoftwareEngineer engMagni = new SoftwareEngineer(
-                "Matías", "Magni", 31, true, 70000, "Semi-Senior"
+                "Matías", "Magni", 31, true, 30000, "Semi-Senior"
         );
         engMagni.addSkill(communicationSkill);
-        vm.validate(engMagni);
+        failedRules.addAll(vm.validate(engMagni));
+
+        // Print the failed ruleset list.
+        System.out.println("\nFailed ruleset list:");
+        System.out.println("--------------------\n");
+        failedRules.forEach((Rule rule) -> {
+            System.out.println("* " + rule.getName());
+        });
+
+        // isValid() check.
+        System.out.println("\nValidation results:");
+        System.out.println("-------------------\n");
+        System.out.println(communicationSkill.getName() + ": " + vm.isValid(communicationSkill));
+        System.out.println(engMagni.getName() + ": " + vm.isValid(engMagni));
+
+        // Specific validator.
+        ValidatorManager.Validator validator = vm.buildValidatorFor(SoftwareEngineer.class);
+        validator.verify(engMagni);
+        validator.isVerified(engMagni);
+
     }
 }
