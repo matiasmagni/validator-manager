@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 
 /**
  * Versatile and adaptable validator. Receives and stores validation rules for a particular class of objects.
+ *
+ * @author Matías J. Magni <matias.magni@globallogic.com>
  */
 public class ValidatorManager {
     // Validations map.
@@ -93,6 +95,9 @@ public class ValidatorManager {
         return (this.validate(object).size() == 0);
     }
 
+    /**
+     * Specific validator for a determined class prototype.
+     */
     public abstract class Validator {
         // The class prototype of the validator.
         protected Class prototype;
