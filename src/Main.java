@@ -3,8 +3,8 @@ import employees.Engineer;
 import employees.SoftwareEngineer;
 import validator.Rule;
 import validator.ValidatorManager;
-
 import java.util.HashSet;
+
 
 /**
  * Program's main class.
@@ -12,6 +12,9 @@ import java.util.HashSet;
  * @author Matías J. Magni <matias.magni@globallogic.com>
  */
 public class Main {
+
+    private static final String NEW_LINE = System.getProperty("line.separator");
+    
     /**
      * Application's entry point.
      *
@@ -77,17 +80,17 @@ public class Main {
         failedRules.addAll(vm.validate(engMagni));
 
         // Print the failed ruleset list.
-        System.out.println("\nFailed ruleset list:");
-        System.out.println("--------------------\n");
+        System.out.println(NEW_LINE + "Failed ruleset list:");
+        System.out.println("--------------------" + NEW_LINE);
         failedRules.forEach((Rule rule) -> {
             System.out.println("* " + rule.getName());
         });
 
         // isValid() check.
-        System.out.println("\nValidation results:");
-        System.out.println("-------------------\n");
-        System.out.println(communicationSkill.getName() + ": " + vm.isValid(communicationSkill));
-        System.out.println(engMagni.getName() + ": " + vm.isValid(engMagni));
+        System.out.println(NEW_LINE + "Validation results:");
+        System.out.println("---------------------" + NEW_LINE);
+        System.out.println(communicationSkill.getName() + ": " + vm.isValid(communicationSkill) + NEW_LINE);
+        System.out.println(engMagni.getName() + ": " + vm.isValid(engMagni) + NEW_LINE);
 
         // Specific validator.
         ValidatorManager.Validator validator = vm.buildValidatorFor(SoftwareEngineer.class);
