@@ -68,7 +68,7 @@ public class ValidatorManager {
         // Loop over all the object's validation ruleset.
         if (rules != null) {
             rules.forEach((Rule rule) -> {
-                boolean valid = (boolean) rule.getExec().apply(object);
+                boolean valid = rule.validate(object);
                 if (!valid) {
                     failedRules.add(rule);
                 }
@@ -96,65 +96,26 @@ public class ValidatorManager {
     }
 
     /**
-     * Specific validator for a determined class prototype.
-     */
-    public abstract class Validator {
-        // The class prototype of the validator.
-        protected Class prototype;
-
-        /**
-         * Constructor.
-         *
-         * @param prototype The class prototype of the validator.
-         */
-        public Validator(Class prototype) {
-            this.prototype = prototype;
-        }
-
-        /**
-         * Adds a new validation's rule.
-         *
-         * @param rule The rule to add.
-         */
-        public abstract void addRule(Rule rule);
-
-        /**
-         * Validates an object against its own defined validations ruleset and returns true if it
-         * passed the validation's tests.
-         *
-         * @param object The object to validate.
-         * @return boolean Validation's boolean result.
-         */
-        public abstract boolean isVerified(Object object);
-
-        /**
-         * Validates an object against its own defined validations ruleset and returns a list of
-         * failed validation's rules.
-         *
-         * @param object The object to validate.
-         */
-        public abstract Set<Rule> verify(Object object);
-    }
-
-    /**
      * Builds a specific validator for a determined class prototype.
      *
      * @param prototype The class prototype of the validator.
      * @return The validator for the specify class prototype.
      */
-    public Validator buildValidatorFor(Class prototype) {
-        return new Validator(prototype) {
+    public IValidator buildValidatorFor(Class prototype) {
+        return new IValidator() {
 
             public void addRule(Rule rule) {
-                addRuleFor(this.prototype, rule);
+                addRuleFor(prototype, rule);
             }
 
-            public boolean isVerified(Object object) {
-                return isValid(object);
+            public boolean isValid(Object object) {
+                return (this.validate(object).size() == 0);
             }
 
-            public Set<Rule> verify(Object object) {
-                return validate(object);
+            public Set<Rule> validate(Object object) {
+                LOGGER.info(object.getClass().toString());
+
+                return validateAgainstClassType(object, object.getClass());
             }
         };
     }
