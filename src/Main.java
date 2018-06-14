@@ -1,9 +1,14 @@
 import employees.Skill;
 import employees.Engineer;
 import employees.SoftwareEngineer;
+import rules.AgeRule;
+import rules.EngineerSeniorityRule;
+import rules.SkillRule;
+import rules.SoftwareEngineerSalaryRule;
 import validator.Rule;
 import validator.ValidatorManager;
 import java.util.HashSet;
+import validator.IValidator;
 
 
 /**
@@ -24,48 +29,19 @@ public class Main {
         ValidatorManager vm = new ValidatorManager();
 
         // Skill grade's rule definition.
-        Rule skillGradeRule = new Rule("Skill Grade");
-        skillGradeRule.setExec((Skill skill) -> {
-            return (skill.getGrade() > 0 && skill.getGrade() <= 100);
-        });
+        Rule skillGradeRule = new SkillRule("Skill Grade");
         vm.addRuleFor(Skill.class, skillGradeRule);
 
         // Engineer's age rule definition.
-        Rule engAgeRule = new Rule("Engineer's Age");
-        engAgeRule.setExec((Engineer engineer) -> {
-            return (engineer.getAge() > 23 && engineer.getAge() <= 60);
-        });
+        Rule engAgeRule = new AgeRule("Engineer's Age");
         vm.addRuleFor(Engineer.class, engAgeRule);
 
         // Engineer's seniority rule definition.
-        Rule engSeniorityRule = new Rule("Engineer's Seniority");
-        engSeniorityRule.setExec((Engineer eng) -> {
-            String s = eng.getSeniority();
-            return (s == "Trainee" || s == "Junior" || s == "Semi-Senior" || s == "Senior");
-        });
+        Rule engSeniorityRule = new EngineerSeniorityRule();
         vm.addRuleFor(Engineer.class, engSeniorityRule);
 
         // Engineer's age rule definition.
-        Rule softEngSalaryRule = new Rule("Software Engineer's Salary");
-        softEngSalaryRule.setExec((SoftwareEngineer eng) -> {
-            boolean state = false;
-            switch (eng.getSeniority()) {
-                case "Trainee":
-                    state = eng.getSalary() >= 30000 && eng.getSalary() < 48000;
-                    break;
-                case "Junior":
-                    state = eng.getSalary() >= 48000 && eng.getSalary() <= 67000;
-                    break;
-                case "Semi-Senior":
-                    state = eng.getSalary() > 67000 && eng.getSalary() < 103000;
-                    break;
-                case "Senior":
-                    state = eng.getSalary() >= 103000 && eng.getSalary() <= 119000;
-                    break;
-            }
-
-            return state;
-        });
+        Rule softEngSalaryRule = new SoftwareEngineerSalaryRule();
         vm.addRuleFor(SoftwareEngineer.class, softEngSalaryRule);
 
         // Skills validations.
@@ -93,9 +69,9 @@ public class Main {
         System.out.println(engMagni.getName() + ": " + vm.isValid(engMagni) + NEW_LINE);
 
         // Specific validator.
-        ValidatorManager.Validator validator = vm.buildValidatorFor(SoftwareEngineer.class);
-        validator.verify(engMagni);
-        validator.isVerified(engMagni);
+        IValidator validator = vm.buildValidatorFor(SoftwareEngineer.class);
+        validator.validate(engMagni);
+        validator.isValid(engMagni);
 
     }
 }

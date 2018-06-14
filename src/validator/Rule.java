@@ -1,16 +1,13 @@
 package validator;
 
-import java.util.function.Function;
-
 /**
  * Validation rule.
  *
  * @author Matías J. Magni <matias.magni@gmail.com>
  */
-public class Rule {
-    private String name;
-    private String description;
-    private Function<?, Boolean> exec;
+public abstract class Rule<T> {
+    protected String name;
+    protected String description;
 
     /**
      * Constructor.
@@ -25,22 +22,10 @@ public class Rule {
      * Constructor.
      *
      * @param name The rule's title.
-     * @param exec Lambda expression with the validations to perform.
-     */
-    public Rule(String name, Function<?, Boolean> exec) {
-        this(name);
-        this.exec = exec;
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param name The rule's title.
-     * @param exec Lambda expression with the validations to perform.
      * @param description The rule's validation description.
      */
-    public Rule(String name, Function<?, Boolean> exec, String description) {
-        this(name, exec);
+    public Rule(String name, String description) {
+        this(name);
         this.description = description;
     }
 
@@ -63,24 +48,6 @@ public class Rule {
     }
 
     /**
-     * Gets the validation's executable code.
-     *
-     * @return Lambda expression with the validations to perform.
-     */
-    public Function getExec() {
-        return exec;
-    }
-
-    /**
-     * Sets the validation's executable code.
-     *
-     * @param runnable Lambda expression with the validations to perform.
-     */
-    public void setExec(Function<?, Boolean> runnable) {
-        this.exec = runnable;
-    }
-
-    /**
      * Gets the rule's purpose description.
      *
      * @return The rule's purpose description.
@@ -97,6 +64,15 @@ public class Rule {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    /**
+     * Validates an object against a set of validation's rules.
+     *
+     * @param object The object to be validated.
+     * @return <code>true</code> if the object is valid.
+     *         <code>false</code> if the object is invalid.
+     */
+    public abstract boolean validate(T object);
 
     /**
      * Gets a string representation of the Rule.
